@@ -47,7 +47,7 @@ public class Minesweeper {
         f.setDefaultCloseOperation(3);
         System.out.println("Game size: " + game.getBoardSize() + ", numbombs: "+game.numBombs);
         //f.setSize(game.getBoardSize()*40+20, game.getBoardSize()*40+40+mb.getHeight());
-        f.setSize(600, 600);
+        f.setSize(400, 600);
         f.setVisible(true);
 
         /*
