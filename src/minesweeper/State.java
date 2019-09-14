@@ -1,4 +1,4 @@
-
+package minesweeper;
 public enum State {
    UNCLICKED,
    CLICKED,
