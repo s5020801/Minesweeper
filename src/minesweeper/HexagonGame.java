@@ -52,8 +52,9 @@ public class HexagonGame extends Game {
                 // Set up mouse listener for each cell.
                 setMouseListener(cell);
 
-                if(panel != null)
+                if (panel != null) {
                     panel.add(board[i][j].getBtn());
+                }
             }
         }
     }
@@ -108,8 +109,11 @@ public class HexagonGame extends Game {
     }
 
     int countAdjacentBombs(int x, int y) {
-        if(board == null || board.length == 0){ System.out.println("Board is broken."); return -100;}
-        
+        if (board == null || board.length == 0) {
+            System.out.println("Board is broken.");
+            return -100;
+        }
+
         System.out.println("X: " + x + ", Y: " + y + ", board length: " + board.length);
 
         int count = 0;
@@ -129,18 +133,18 @@ public class HexagonGame extends Game {
         }
 
         if (y - 1 >= 0) {
-            if (x+rowOffset > 0 && x+rowOffset < board.length && board[x+rowOffset][y-1].isBomb()) {
+            if (x + rowOffset > 0 && x + rowOffset < board.length && board[x + rowOffset][y - 1].isBomb()) {
                 count++;
             }
-            if (board[x][y-1].isBomb()) {
+            if (board[x][y - 1].isBomb()) {
                 count++;
             }
         }
         if (y + 1 < board.length) {
-            if (x+rowOffset > 0 && x+rowOffset < board.length && board[x+rowOffset][y+1].isBomb()) {
+            if (x + rowOffset > 0 && x + rowOffset < board.length && board[x + rowOffset][y + 1].isBomb()) {
                 count++;
             }
-            if (board[x][y+1].isBomb()) {
+            if (board[x][y + 1].isBomb()) {
                 count++;
             }
         }
@@ -149,25 +153,48 @@ public class HexagonGame extends Game {
     }
 
     void openCellsFrom(int x, int y) {
-        for (int i = x - 1; i <= x + 1; i++) {
-            for (int j = y - 1; j <= y + 1; j++) {
-                if (i > 8 || j > 8 || i < 0 || j < 0) {
-                    continue;
-                }
-                int adjBombs = countAdjacentBombs(i, j);
-                if (adjBombs == 0 && board[i][j].getState() != State.CLICKED) {
-                    board[i][j].setState(State.CLICKED);
-                    board[i][j].getBtn().setIcon(new ImageIcon(Img.clickedImgHex));
-                    openCellsFrom(i, j);
-                }
-                board[i][j].setState(State.CLICKED);
-                if (adjBombs >= Img.hexNumBombsImgArr.length) {
-                    System.out.println("adj Bombs: " + adjBombs + ", img length: " + Img.hexNumBombsImgArr.length);
-                }
-                board[i][j].getBtn().setIcon(new ImageIcon(Img.hexNumBombsImgArr[adjBombs]));
 
-            }
+        if (x - 1 >= 0) {
+            setOpenCells(x - 1, y);
         }
+
+        if (x + 1 < board.length) {
+            setOpenCells(x + 1, y);
+        }
+
+        int rowOffset = 1;
+        if (y == 0 || y % 2 == 0) {
+            System.out.println("Row is not offset., opening cells.");
+            rowOffset = -1;
+        }
+
+        if (y - 1 >= 0) {
+            if (x + rowOffset > 0 && x + rowOffset < board.length) {
+                setOpenCells(x + rowOffset, y - 1);
+            }
+
+            setOpenCells(x, y - 1);
+        }
+        if (y + 1 < board.length) {
+            if (x + rowOffset > 0 && x + rowOffset < board.length) {
+                setOpenCells(x + rowOffset, y + 1);
+            }
+
+            setOpenCells(x, y + 1);
+        }
+
+
+    }
+
+    void setOpenCells(int x, int y) {
+        int adjBombs = countAdjacentBombs(x, y);
+        if (adjBombs == 0 && board[x][y].getState() != State.CLICKED) {
+            board[x][y].setState(State.CLICKED);
+            board[x][y].getBtn().setIcon(new ImageIcon(Img.clickedImgHex));
+            openCellsFrom(x, y);
+        }
+        board[x][y].setState(State.CLICKED);
+        board[x][y].getBtn().setIcon(new ImageIcon(Img.hexNumBombsImgArr[adjBombs]));
     }
 
     void showBombs() {
