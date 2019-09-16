@@ -11,18 +11,26 @@ import javax.swing.JPanel;
 
 public class HexagonGame extends Game {
 
-    int hexWidth = 36;//180;
-    int hexHeight = 40;//207;
+    public HexagonGame(Difficulty difficulty) {
+        int size = Const.BEGINNER_BOARD_SIZE;
+        int numberOfBombs = Const.BEGINNER_NUM_BOMBS;
 
-    public HexagonGame(int size, int numBombs) {
+        if (difficulty == Difficulty.INTERMEDIATE) {
+            size = Const.INTERMEDIATE_BOARD_SIZE;
+            numberOfBombs = Const.INTERMEDIATE_NUM_BOMBS;
+            
+        } else if (difficulty == Difficulty.EXPERT) {
+            size = Const.EXPERT_BOARD_SIZE;
+            numberOfBombs = Const.EXPERT_NUM_BOMBS;
+        }
+        
         this.board = new Cell[size][size];
         this.boardSize = size;
-        this.numBombs = numBombs;
-    }
-
-    void init(JPanel panel) {
-        initCells(panel);
-        initBombs();
+        this.numBombs = numberOfBombs;
+        this.cellWidth = 36;//180;
+        this.cellHeight = 40;//207;
+        this.difficulty = difficulty;
+        this.gameMode = GameMode.HEXAGON;
     }
 
     void initCells(JPanel panel) {
@@ -31,7 +39,7 @@ public class HexagonGame extends Game {
             for (int j = 0; j < boardSize; j++) {
                 board[i][j] = new Cell(new JButton(new ImageIcon(Img.unclickedImgHex)), State.UNCLICKED, false, i, j);
 
-                board[i][j].getBtn().setPreferredSize(new Dimension(hexWidth, hexHeight));
+                board[i][j].getBtn().setPreferredSize(new Dimension(cellWidth, cellHeight));
                 board[i][j].getBtn().setMargin(new Insets(0, 0, 0, 0));
                 board[i][j].getBtn().setBorder(null);
                 board[i][j].getBtn().setContentAreaFilled(false);
@@ -40,12 +48,12 @@ public class HexagonGame extends Game {
 
                 int xOffset = 0;
                 if (j % 2 == 1) {
-                    xOffset = hexWidth / 2;
+                    xOffset = cellWidth / 2;
                 }
 
-                int yOffset = hexHeight / 4 * 3;//(hexHeight*0.75);
+                int yOffset = cellHeight / 4 * 3;//(hexHeight*0.75);
 
-                board[i][j].getBtn().setBounds(board[i][j].getX() * hexWidth + 10 + xOffset, board[i][j].getY() * yOffset, hexWidth, hexHeight);
+                board[i][j].getBtn().setBounds(board[i][j].getX() * cellWidth + 10 + xOffset, board[i][j].getY() * yOffset, cellWidth, cellHeight);
 
                 Cell cell = board[i][j];
 
@@ -63,11 +71,19 @@ public class HexagonGame extends Game {
         cell.getBtn().addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
 
+                if(!gameStarted){
+                    gameStarted = true;
+                    Minesweeper.startTimer();
+                }
+                if(gameOver)
+                    return;
+                
                 if (cell.isBomb()) {
                     cell.getBtn().setIcon(new ImageIcon(Img.bombRedImgHex));
                     cell.setState(State.RED_BOMB);
                     showBombs();
                     // Lost game.
+                    gameOver = true;
                     return;
                 }
 
@@ -88,24 +104,6 @@ public class HexagonGame extends Game {
 
             }
         });
-    }
-
-    void initBombs() {
-        int bombCount = 0;
-        Random random = new Random(1234);
-        while (bombCount < numBombs) {
-            //int randX = ThreadLocalRandom.current().nextInt(0, boardSize - 1);
-            //int randY = ThreadLocalRandom.current().nextInt(0, boardSize - 1);
-            int randX = random.nextInt(boardSize - 1);
-            int randY = random.nextInt(boardSize - 1);
-
-            if (board[randX][randY].isBomb()) {
-                continue;
-            }
-
-            board[randX][randY].setBomb(true);
-            bombCount++;
-        }
     }
 
     int countAdjacentBombs(int x, int y) {
@@ -198,8 +196,8 @@ public class HexagonGame extends Game {
     }
 
     void showBombs() {
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
                 if (board[i][j].isBomb() && !board[i][j].getState().equals(State.RED_BOMB)) {
                     board[i][j].getBtn().setIcon(new ImageIcon(Img.bombImgHex));
                 }

@@ -1,17 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package minesweeper;
 
-import java.awt.GridLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -19,70 +19,145 @@ import javax.swing.WindowConstants;
  */
 public class Minesweeper {
 
+    //The Beginner (8x8) and Intermediate (16x16)
+    //Beginner has 10 mines, Intermediate has 40 mines, and Expert has 99 mines.
+    // Default
+    public static Game game = (Game) new ClassicGame(Difficulty.BEGINNER);
+    public static JLabel timer = new JLabel("Score: 0");
+    public static long startTime = System.currentTimeMillis();
+    //Game game = (Game)new HexagonGame(boardSize, 10);
+    //Game game = (Game)new ClassicGame(boardSize, 30);
+
     public static void main(String[] args) {
-        // Default
-        int boardSize = 9;
+        Img.initImages();
+        GUI.init();
+        //game.init(GUI.panel);
+        /*
         //Setting images
         Img.initImages();
 
-        JPanel p = new JPanel();
-        p.setLayout(null);
-        //addBtns(p, 10, 0);
-        //System.out.println("sfdsf: " +(int)(hexHeight*0.75)+2);
-        //addBtns(p, (int)(hexHeight*0.75)+11, hexWidth/2);
-        //addBtns(p, 10+hexHeight, 0);
+        panel = new JPanel();
+        panel.setLayout(null);
 
         // Setting up game
-        Game game = (Game)new HexagonGame(boardSize, 10);
-        //Game game = (Game)new ClassicGame(boardSize, 30);
-        game.init(p);
-        
+        game.init(panel);
+
         JMenuBar mb = createMenuBar();
 
-        JFrame f = new JFrame("Minesweeper");
-        f.setJMenuBar(mb);
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame = new JFrame("Minesweeper");
+        frame.setJMenuBar(mb);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        f.add(p);
-        f.setDefaultCloseOperation(3);
-        System.out.println("Game size: " + game.getBoardSize() + ", numbombs: "+game.numBombs);
+        frame.add(panel);
+        frame.setDefaultCloseOperation(3);
+        System.out.println("Game size: " + game.getBoardSize() + ", numbombs: " + game.numBombs);
         //f.setSize(game.getBoardSize()*40+20, game.getBoardSize()*40+40+mb.getHeight());
-        f.setSize(400, 600);
-        f.setVisible(true);
-
-        /*
-      // Setting up frame
-      JFrame frame = new JFrame("Minesweeper");
-      frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-      JPanel panel = new JPanel(new GridLayout(9,9,0,0));
-      
-      // Setting up game
-      Game game = new ClassicGame(boardSize, 10);
-      game.init(panel);
-      
-      // Open frame
-      frame.setContentPane(panel);
-      frame.pack();
-      frame.setVisible(true);
+        frame.setSize(400, 600);
+        frame.setVisible(true);
          */
     }
 
-    private static JMenuBar createMenuBar() {
+    public static JMenuBar createMenuBar() {
 
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu fileMenu = new JMenu("Mode");
+        JMenu modeMenu = new JMenu("Mode");
 
         JMenuItem classicMenuItem = new JMenuItem("Classic");
-        JMenuItem hexagonMenuItem = new JMenuItem("Hexagon");
-        classicMenuItem.addActionListener((event) -> System.out.println("Clicked Classic"));
-        hexagonMenuItem.addActionListener((event) -> System.out.println("Clicked Hexagon"));
+        classicMenuItem.addActionListener((event) -> {
+            Difficulty currentDifficulty = game.getDifficulty();
+            restartGame(GameMode.CLASSIC, currentDifficulty);
+        });
 
-        fileMenu.add(classicMenuItem);
-        fileMenu.add(hexagonMenuItem);
-        menuBar.add(fileMenu);
+        JMenuItem hexagonMenuItem = new JMenuItem("Hexagon");
+        hexagonMenuItem.addActionListener((event) -> {
+
+            Difficulty currentDifficulty = game.getDifficulty();
+            restartGame(GameMode.HEXAGON, currentDifficulty);
+        });
+
+        modeMenu.add(classicMenuItem);
+        modeMenu.add(hexagonMenuItem);
+
+        JMenu difficultyMenu = new JMenu("Difficulty");
+
+        JMenuItem beginnerItem = new JMenuItem("Beginner");
+        beginnerItem.addActionListener((event) -> {
+            GameMode currentGameMode = game.getGameMode();
+            restartGame(currentGameMode, Difficulty.BEGINNER);
+        });
+
+        JMenuItem intermediateItem = new JMenuItem("Intermediate");
+        intermediateItem.addActionListener((event) -> {
+            GameMode currentGameMode = game.getGameMode();
+            restartGame(currentGameMode, Difficulty.INTERMEDIATE);
+        });
+
+        JMenuItem expertItem = new JMenuItem("Expert");
+        expertItem.addActionListener((event) -> {
+            GameMode currentGameMode = game.getGameMode();
+            restartGame(currentGameMode, Difficulty.EXPERT);
+        });
+
+        difficultyMenu.add(beginnerItem);
+        difficultyMenu.add(intermediateItem);
+        difficultyMenu.add(expertItem);
+        
+        
+        JButton restartBtn = new JButton("Restart");
+        restartBtn.addActionListener((event) -> {
+            GameMode currentGameMode = game.getGameMode();
+            Difficulty currentDifficulty = game.getDifficulty();
+            restartGame(currentGameMode, currentDifficulty);
+        });
+
+        menuBar.add(modeMenu);
+        menuBar.add(difficultyMenu);
+        menuBar.add(restartBtn);
+        menuBar.add(Box.createHorizontalGlue());
+        timer.setBorder(new EmptyBorder(0,0,0,20));
+        menuBar.add(timer);
 
         return menuBar;
+    }
+
+    public static void restartGame(GameMode gameMode, Difficulty difficulty) {
+        GUI.panel.removeAll();
+        GUI.panel.revalidate();
+        GUI.panel.repaint();
+        int width = 0;
+        int height = 0;
+        if (gameMode.equals(GameMode.CLASSIC)) {
+            game = (Game) new ClassicGame(difficulty);
+            width = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 20;
+            height = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellHeight() + 60;
+        } else if (gameMode.equals(GameMode.HEXAGON)) {
+            game = (Game) new HexagonGame(difficulty);
+            width = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 20 + (Minesweeper.game.getCellWidth() / 2);
+            height = Minesweeper.game.getBoardSize() * (Minesweeper.game.getCellHeight() / 4 * 3) + 60;
+        }
+        game.init(GUI.panel);
+        startTimer();
+        GUI.frame.setSize(width, height);
+    }
+
+    public static void startTimer() {
+        startTime = System.currentTimeMillis();
+        long savedTime = startTime;
+        new Thread(() -> {
+            while (savedTime == startTime && !game.isGameOver()) {
+
+                long millisRun = System.currentTimeMillis() - startTime;
+                long secondsRun = millisRun / 1000;
+                timer.setText("Score: " + secondsRun);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Minesweeper.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }).start();
     }
 
 }
