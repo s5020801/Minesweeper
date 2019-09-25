@@ -17,7 +17,7 @@ public class ClassicGame extends Game {
         if (difficulty == Difficulty.INTERMEDIATE) {
             size = Const.INTERMEDIATE_BOARD_SIZE;
             numberOfBombs = Const.INTERMEDIATE_NUM_BOMBS;
-            
+
         } else if (difficulty == Difficulty.EXPERT) {
             size = Const.EXPERT_BOARD_SIZE;
             numberOfBombs = Const.EXPERT_NUM_BOMBS;
@@ -30,6 +30,33 @@ public class ClassicGame extends Game {
         this.cellHeight = 40;
         this.difficulty = difficulty;
         this.gameMode = GameMode.CLASSIC;
+
+        this.seed = System.currentTimeMillis();
+        this.seed = 1234;
+    }
+
+    public ClassicGame(Difficulty difficulty, long seed) {
+        int size = Const.BEGINNER_BOARD_SIZE;
+        int numberOfBombs = Const.BEGINNER_NUM_BOMBS;
+
+        if (difficulty == Difficulty.INTERMEDIATE) {
+            size = Const.INTERMEDIATE_BOARD_SIZE;
+            numberOfBombs = Const.INTERMEDIATE_NUM_BOMBS;
+
+        } else if (difficulty == Difficulty.EXPERT) {
+            size = Const.EXPERT_BOARD_SIZE;
+            numberOfBombs = Const.EXPERT_NUM_BOMBS;
+        }
+
+        this.board = new Cell[size][size];
+        this.boardSize = size;
+        this.numBombs = numberOfBombs;
+        this.cellWidth = 40;
+        this.cellHeight = 40;
+        this.difficulty = difficulty;
+        this.gameMode = GameMode.CLASSIC;
+
+        this.seed = seed;
     }
 
     void initCells(JPanel panel) {
@@ -52,7 +79,9 @@ public class ClassicGame extends Game {
                 // Set up mouse listener for each cell.
                 setMouseListener(cell);
 
-                panel.add(board[i][j].getBtn());
+                if (panel != null) {
+                    panel.add(board[i][j].getBtn());
+                }
             }
         }
     }
@@ -61,32 +90,39 @@ public class ClassicGame extends Game {
         cell.getBtn().addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
 
-                if(!gameStarted){
+                if (!gameStarted) {
                     gameStarted = true;
                     Minesweeper.startTimer();
                 }
-                if(gameOver)
-                    return;
-                
-                if (cell.isBomb()) {
-                    cell.getBtn().setIcon(new ImageIcon(Img.bombRedImgClassic));
-                    cell.setState(State.RED_BOMB);
-                    showBombs();
-                    // Lost game.
-                    gameOver = true;
+                if (gameOver) {
                     return;
                 }
 
-                int numBombs = countAdjacentBombs(cell.getX(), cell.getY());
-                if (numBombs == 0) {
+                if (evt.getButton() == 1) {
+
+                    if (cell.isBomb()) {
+                        cell.getBtn().setIcon(new ImageIcon(Img.bombRedImgClassic));
+                        cell.setState(State.RED_BOMB);
+                        showBombs();
+                        // Lost game.
+                        gameOver = true;
+                        return;
+                    }
+
+                    int numBombs = countAdjacentBombs(cell.getX(), cell.getY());
+                    if (numBombs == 0) {
+                        cell.setState(State.CLICKED);
+                        cell.getBtn().setIcon(new ImageIcon(Img.clickedImgClassic));
+                        openCellsFrom(cell.getX(), cell.getY());
+                        return;
+                    }
+
                     cell.setState(State.CLICKED);
-                    cell.getBtn().setIcon(new ImageIcon(Img.clickedImgClassic));
-                    openCellsFrom(cell.getX(), cell.getY());
-                    return;
+                    cell.getBtn().setIcon(new ImageIcon(Img.classicNumBombsImgArr[numBombs]));
+                } else if (evt.getButton() == 3) {
+                    cell.setState(State.FLAGGED);
+                    cell.getBtn().setIcon(new ImageIcon(Img.flaggedImgClassic));
                 }
-
-                cell.setState(State.CLICKED);
-                cell.getBtn().setIcon(new ImageIcon(Img.classicNumBombsImgArr[numBombs]));
 
             }
         });
