@@ -120,8 +120,16 @@ public class ClassicGame extends Game {
                     cell.setState(State.CLICKED);
                     cell.getBtn().setIcon(new ImageIcon(Img.classicNumBombsImgArr[numBombs]));
                 } else if (evt.getButton() == 3) {
-                    cell.setState(State.FLAGGED);
-                    cell.getBtn().setIcon(new ImageIcon(Img.flaggedImgClassic));
+                    if (cell.getState() == State.FLAGGED) {
+
+                        cell.setState(State.UNCLICKED);
+                        cell.getBtn().setIcon(new ImageIcon(Img.unclickedImgClassic));
+                    } else {
+
+                        cell.setState(State.FLAGGED);
+                        cell.getBtn().setIcon(new ImageIcon(Img.flaggedImgClassic));
+                    }
+
                 }
                 if (hasWon()) {
                     gameOver = true;

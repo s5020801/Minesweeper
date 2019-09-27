@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class HexagonGame extends Game {
@@ -18,12 +19,12 @@ public class HexagonGame extends Game {
         if (difficulty == Difficulty.INTERMEDIATE) {
             size = Const.INTERMEDIATE_BOARD_SIZE;
             numberOfBombs = Const.INTERMEDIATE_NUM_BOMBS;
-            
+
         } else if (difficulty == Difficulty.EXPERT) {
             size = Const.EXPERT_BOARD_SIZE;
             numberOfBombs = Const.EXPERT_NUM_BOMBS;
         }
-        
+
         this.board = new Cell[size][size];
         this.boardSize = size;
         this.numBombs = numberOfBombs;
@@ -31,6 +32,32 @@ public class HexagonGame extends Game {
         this.cellHeight = 40;//207;
         this.difficulty = difficulty;
         this.gameMode = GameMode.HEXAGON;
+
+        this.seed = System.currentTimeMillis();
+    }
+
+    public HexagonGame(Difficulty difficulty, long seed) {
+        int size = Const.BEGINNER_BOARD_SIZE;
+        int numberOfBombs = Const.BEGINNER_NUM_BOMBS;
+
+        if (difficulty == Difficulty.INTERMEDIATE) {
+            size = Const.INTERMEDIATE_BOARD_SIZE;
+            numberOfBombs = Const.INTERMEDIATE_NUM_BOMBS;
+
+        } else if (difficulty == Difficulty.EXPERT) {
+            size = Const.EXPERT_BOARD_SIZE;
+            numberOfBombs = Const.EXPERT_NUM_BOMBS;
+        }
+
+        this.board = new Cell[size][size];
+        this.boardSize = size;
+        this.numBombs = numberOfBombs;
+        this.cellWidth = 36;//180;
+        this.cellHeight = 40;//207;
+        this.difficulty = difficulty;
+        this.gameMode = GameMode.HEXAGON;
+
+        this.seed = seed;
     }
 
     void initCells(JPanel panel) {
@@ -71,36 +98,60 @@ public class HexagonGame extends Game {
         cell.getBtn().addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
 
-                if(!gameStarted){
+                if (!gameStarted) {
                     gameStarted = true;
                     Minesweeper.startTimer();
                 }
-                if(gameOver)
-                    return;
-                
-                if (cell.isBomb()) {
-                    cell.getBtn().setIcon(new ImageIcon(Img.bombRedImgHex));
-                    cell.setState(State.RED_BOMB);
-                    showBombs();
-                    // Lost game.
-                    gameOver = true;
+                if (gameOver) {
                     return;
                 }
 
-                int numBombs = countAdjacentBombs(cell.getX(), cell.getY());
-                if (numBombs == 0) {
+                if (evt.getButton() == 1) {
+
+                    if (cell.isBomb()) {
+                        cell.getBtn().setIcon(new ImageIcon(Img.bombRedImgHex));
+                        cell.setState(State.RED_BOMB);
+                        showBombs();
+                        // Lost game.
+                        gameOver = true;
+                        return;
+                    }
+
+                    int numBombs = countAdjacentBombs(cell.getX(), cell.getY());
+                    if (numBombs == 0) {
+                        cell.setState(State.CLICKED);
+                        cell.getBtn().setIcon(new ImageIcon(Img.clickedImgHex));
+                        openCellsFrom(cell.getX(), cell.getY());
+                        return;
+                    }
+
                     cell.setState(State.CLICKED);
-                    cell.getBtn().setIcon(new ImageIcon(Img.clickedImgHex));
-                    openCellsFrom(cell.getX(), cell.getY());
-                    return;
-                }
 
-                cell.setState(State.CLICKED);
-
-                if (numBombs >= Img.hexNumBombsImgArr.length) {
-                    System.out.println("adj Bombs: " + numBombs + ", img length: " + Img.hexNumBombsImgArr.length);
+                    cell.getBtn().setIcon(new ImageIcon(Img.hexNumBombsImgArr[numBombs]));
+                } else if (evt.getButton() == 3) {
+                    if (cell.getState() == State.FLAGGED) {
+                        
+                        cell.setState(State.UNCLICKED);
+                        cell.getBtn().setIcon(new ImageIcon(Img.unclickedImgHex));
+                    } else {
+                        
+                        cell.setState(State.FLAGGED);
+                        cell.getBtn().setIcon(new ImageIcon(Img.flaggedImgHex));
+                    }
                 }
-                cell.getBtn().setIcon(new ImageIcon(Img.hexNumBombsImgArr[numBombs]));
+                if (hasWon()) {
+                    gameOver = true;
+                    System.out.println("Player won!!!");
+                    String s = (String) JOptionPane.showInputDialog(
+                            GUI.frame,
+                            "Congrats, you won!\n"
+                            + "Would you like to save to high scores?",
+                            "",
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            null,
+                            "Name");
+                }
 
             }
         });
@@ -180,7 +231,6 @@ public class HexagonGame extends Game {
 
             setOpenCells(x, y + 1);
         }
-
 
     }
 

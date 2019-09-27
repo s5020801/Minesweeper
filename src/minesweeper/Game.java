@@ -46,7 +46,8 @@ public abstract class Game {
     public boolean hasWon(){
         for(int i = 0; i < board.length; i++){
             for(int j = 0; j < board[i].length; j++){
-                if(!board[i][j].isBomb() && board[i][j].getState() == State.UNCLICKED)
+                //if(!board[i][j].isBomb() && board[i][j].getState() == State.UNCLICKED)
+                if(board[i][j].getState() == State.UNCLICKED)
                     return false;
             }
         }
