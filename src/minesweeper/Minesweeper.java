@@ -76,8 +76,16 @@ public class Minesweeper {
             restartGame(GameMode.HEXAGON, currentDifficulty);
         });
 
+        JMenuItem colourMenuItem = new JMenuItem("Colour");
+        colourMenuItem.addActionListener((event) -> {
+
+            Difficulty currentDifficulty = game.getDifficulty();
+            restartGame(GameMode.COLOUR, currentDifficulty);
+        });
+
         modeMenu.add(classicMenuItem);
         modeMenu.add(hexagonMenuItem);
+        modeMenu.add(colourMenuItem);
 
         JMenu difficultyMenu = new JMenu("Difficulty");
 
@@ -135,7 +143,11 @@ public class Minesweeper {
             game = (Game) new HexagonGame(difficulty);
             width = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 20 + (Minesweeper.game.getCellWidth() / 2);
             height = Minesweeper.game.getBoardSize() * (Minesweeper.game.getCellHeight() / 4 * 3) + 60;
-        }
+        } else if (gameMode.equals(GameMode.COLOUR)) {
+            game = (Game) new ColourGame(difficulty);
+            width = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 20;
+            height = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellHeight() + 60;
+        } 
         game.init(GUI.panel);
         startTimer();
         GUI.frame.setSize(width, height);
@@ -150,7 +162,7 @@ public class Minesweeper {
                 long millisRun = System.currentTimeMillis() - startTime;
                 long secondsRun = millisRun / 1000;
                 timer.setText("Score: " + secondsRun);
-
+                
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {

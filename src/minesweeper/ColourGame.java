@@ -2,40 +2,37 @@ package minesweeper;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 
-public class ClassicGame extends Game {
+public class ColourGame extends Game {
 
-    public ClassicGame(Difficulty difficulty) {
-        int size = Const.BEGINNER_BOARD_SIZE;
+    private Colour nextXCol = Colour.RED;
+    private Colour nextYCol = Colour.RED;
+    
+    public ColourGame(Difficulty difficulty) {
+        int size = 6;
         int numberOfBombs = Const.BEGINNER_NUM_BOMBS;
-
-        if (difficulty == Difficulty.INTERMEDIATE) {
-            size = Const.INTERMEDIATE_BOARD_SIZE;
-            numberOfBombs = Const.INTERMEDIATE_NUM_BOMBS;
-
-        } else if (difficulty == Difficulty.EXPERT) {
-            size = Const.EXPERT_BOARD_SIZE;
-            numberOfBombs = Const.EXPERT_NUM_BOMBS;
-        }
 
         this.board = new Cell[size][size];
         this.boardSize = size;
-        this.numBombs = numberOfBombs;
+        //this.numBombs = numberOfBombs;
+        this.numBombs = 1;
         this.cellWidth = 40;
         this.cellHeight = 40;
         this.difficulty = difficulty;
-        this.gameMode = GameMode.CLASSIC;
+        this.gameMode = GameMode.COLOUR;
 
         this.seed = System.currentTimeMillis();
         //this.seed = 1234;
     }
 
-    public ClassicGame(Difficulty difficulty, long seed) {
+    public ColourGame(Difficulty difficulty, long seed) {
         int size = Const.BEGINNER_BOARD_SIZE;
         int numberOfBombs = Const.BEGINNER_NUM_BOMBS;
 
@@ -75,7 +72,10 @@ public class ClassicGame extends Game {
                 board[i][j].getBtn().setBounds(board[i][j].getX() * 40 + 10, board[i][j].getY() * 40, 40, 40);
 
                 Cell cell = board[i][j];
-
+                if(j == 0){
+                    nextXCol = getNextYColour();
+                }
+                cell.setColour(getNextXColour());
                 // Set up mouse listener for each cell.
                 setMouseListener(cell);
 
@@ -99,7 +99,23 @@ public class ClassicGame extends Game {
                 }
 
                 if (evt.getButton() == 1) {
-
+                    
+                    if(cell.getColour() == Colour.RED){
+                        cell.getBtn().setIcon(new ImageIcon(Img.redCellImg));
+                        cell.setState(State.CLICKED);
+                        return;
+                    }
+                    if(cell.getColour() == Colour.BLUE){
+                        cell.getBtn().setIcon(new ImageIcon(Img.blueCellImg));
+                        cell.setState(State.CLICKED);
+                        return;
+                    }
+                    if(cell.getColour() == Colour.YELLOW){
+                        cell.getBtn().setIcon(new ImageIcon(Img.yellowCellImg));
+                        cell.setState(State.CLICKED);
+                        return;
+                    }
+                    System.out.println("Fucked up.");
                     if (cell.isBomb()) {
                         cell.getBtn().setIcon(new ImageIcon(Img.bombRedImgClassic));
                         cell.setState(State.RED_BOMB);
@@ -186,5 +202,71 @@ public class ClassicGame extends Game {
             }
         }
     }
+    
+    Colour getNextXColour(){
+        Colour colour = nextXCol;
+        if(nextXCol == Colour.RED){
+            nextXCol = Colour.YELLOW;
+        } else if(nextXCol == Colour.YELLOW){
+            nextXCol = Colour.BLUE;
+        } else if(nextXCol == Colour.BLUE){
+            nextXCol = Colour.RED;
+        }
+        return colour;
+    }
+    
+    Colour getNextYColour(){
+        Colour colour = nextYCol;
+        if(nextYCol == Colour.RED){
+            nextYCol = Colour.BLUE;
+        } else if(nextYCol == Colour.YELLOW){
+            nextYCol = Colour.RED;
+        } else if(nextYCol == Colour.BLUE){
+            nextYCol = Colour.YELLOW;
+        }
+        return colour;
+    }
 
+    
+    @Override
+    void initBombs() {
+        System.out.println("OVERRIDING");
+        int bombCount = 0;
+        //Random random = new Random(1234);
+        //Random random = new Random(System.currentTimeMillis());
+        Random random = new Random(seed);
+        
+        while (bombCount < numBombs) {
+            int randX = random.nextInt(boardSize - 1);
+            int randY = random.nextInt(boardSize - 1);
+
+            board[randX][randY].setColour(getDifferentColour(board[randX][randY].getColour(), random));
+
+            bombCount++;
+        }
+    }
+    
+    Colour getDifferentColour(Colour oldColour, Random random){
+        boolean randBool = random.nextBoolean();
+        if(oldColour == Colour.RED){
+            if(randBool)
+                return Colour.BLUE;
+            return Colour.YELLOW;
+        }
+        
+        if(oldColour == Colour.BLUE){
+            if(randBool)
+                return Colour.RED;
+            return Colour.YELLOW;
+        }
+        
+        if(oldColour == Colour.YELLOW){
+            if(randBool)
+                return Colour.BLUE;
+            return Colour.RED;
+        }
+        
+        return Colour.NONE;
+    }
+    
 }

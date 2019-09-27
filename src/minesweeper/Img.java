@@ -12,6 +12,7 @@ public class Img {
     public static Image bombRedImgClassic;
     public static Image unclickedImgClassic;
     public static Image clickedImgClassic;
+    public static Image flaggedImgClassic;
 
     public static Image oneBombClassic;
     public static Image twoBombClassic;
@@ -32,6 +33,7 @@ public class Img {
     public static Image bombRedImgHex;
     public static Image unclickedImgHex;
     public static Image clickedImgHex;
+    public static Image flaggedImgHex;
 
     public static Image oneBombHex;
     public static Image twoBombHex;
@@ -41,6 +43,13 @@ public class Img {
     public static Image sixBombHex;
 
     public static Image[] hexNumBombsImgArr;
+    
+    
+    //Colour
+    public static Image redCellImg;
+    public static Image blueCellImg;
+    public static Image yellowCellImg;
+    
 
     public static void initImages() {
         try {
@@ -49,7 +58,8 @@ public class Img {
             clickedImgClassic = ImageIO.read(Minesweeper.class.getResource("/resources/classic/0.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
             bombImgClassic = ImageIO.read(Minesweeper.class.getResource("/resources/classic/bomb.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
             bombRedImgClassic = ImageIO.read(Minesweeper.class.getResource("/resources/classic/bombRed.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-
+            flaggedImgClassic = ImageIO.read(Minesweeper.class.getResource("/resources/classic/flagged.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+            
             oneBombClassic = ImageIO.read(Minesweeper.class.getResource("/resources/classic/1.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
             twoBombClassic = ImageIO.read(Minesweeper.class.getResource("/resources/classic/2.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
             threeBombClassic = ImageIO.read(Minesweeper.class.getResource("/resources/classic/3.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
@@ -76,7 +86,9 @@ public class Img {
             clickedImgHex = ImageIO.read(Minesweeper.class.getResource("/resources/hexagon/0.png")).getScaledInstance(hexWidth, hexHeight, java.awt.Image.SCALE_SMOOTH);
             bombImgHex = ImageIO.read(Minesweeper.class.getResource("/resources/hexagon/BombHexagon.png")).getScaledInstance(hexWidth, hexHeight, java.awt.Image.SCALE_SMOOTH);
             bombRedImgHex = ImageIO.read(Minesweeper.class.getResource("/resources/hexagon/BombRedHexagon.png")).getScaledInstance(hexWidth, hexHeight, java.awt.Image.SCALE_SMOOTH);
-
+            flaggedImgHex = ImageIO.read(Minesweeper.class.getResource("/resources/hexagon/flaggedHexagon.png")).getScaledInstance(hexWidth, hexHeight, java.awt.Image.SCALE_SMOOTH);
+            
+            
             oneBombHex = ImageIO.read(Minesweeper.class.getResource("/resources/hexagon/1.png")).getScaledInstance(hexWidth, hexHeight, java.awt.Image.SCALE_SMOOTH);
             twoBombHex = ImageIO.read(Minesweeper.class.getResource("/resources/hexagon/2.png")).getScaledInstance(hexWidth, hexHeight, java.awt.Image.SCALE_SMOOTH);
             threeBombHex = ImageIO.read(Minesweeper.class.getResource("/resources/hexagon/3.png")).getScaledInstance(hexWidth, hexHeight, java.awt.Image.SCALE_SMOOTH);
@@ -93,6 +105,11 @@ public class Img {
                 fiveBombHex,
                 sixBombHex
             };
+            
+            redCellImg = ImageIO.read(Minesweeper.class.getResource("/resources/colour/Red.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+            blueCellImg = ImageIO.read(Minesweeper.class.getResource("/resources/colour/Blue.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+            yellowCellImg = ImageIO.read(Minesweeper.class.getResource("/resources/colour/Yellow.png")).getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
+            
             
             
         } catch (IOException e) {

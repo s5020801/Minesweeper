@@ -1,25 +1,22 @@
 package minesweeper;
 
-import java.awt.Dimension;
-import java.awt.Insets;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public abstract class Game {
 
-    Difficulty difficulty;
-    GameMode gameMode;
-    Cell[][] board;
-    int boardSize;
-    int numBombs;
-    int cellWidth;
-    int cellHeight;
-    boolean gameOver = false;
-    boolean gameStarted = false;
+    protected Difficulty difficulty;
+    protected GameMode gameMode;
+    protected Cell[][] board;
+    protected int boardSize;
+    protected int numBombs;
+    protected int cellWidth;
+    protected int cellHeight;
+    protected boolean gameOver = false;
+    protected boolean gameStarted = false;
+    
+    //Used for testing. can be used in future for competing in the same game.
+    long seed;
     
 
     void init(JPanel panel) {
@@ -27,14 +24,12 @@ public abstract class Game {
         initBombs();
     }
 
-    abstract void initCells(JPanel panel);
-
-    abstract void setMouseListener(Cell cell);
-
     void initBombs() {
         int bombCount = 0;
         //Random random = new Random(1234);
-        Random random = new Random(System.currentTimeMillis());
+        //Random random = new Random(System.currentTimeMillis());
+        Random random = new Random(seed);
+        
         while (bombCount < numBombs) {
             int randX = random.nextInt(boardSize - 1);
             int randY = random.nextInt(boardSize - 1);
@@ -47,6 +42,20 @@ public abstract class Game {
             bombCount++;
         }
     }
+
+    public boolean hasWon(){
+        for(int i = 0; i < board.length; i++){
+            for(int j = 0; j < board[i].length; j++){
+                if(!board[i][j].isBomb() && board[i][j].getState() == State.UNCLICKED)
+                    return false;
+            }
+        }
+        return true;
+    }
+    
+    abstract void initCells(JPanel panel);
+
+    abstract void setMouseListener(Cell cell);
 
     abstract int countAdjacentBombs(int x, int y);
 
