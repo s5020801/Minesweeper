@@ -18,6 +18,7 @@ import javax.swing.WindowConstants;
 public class GUI {
     public static JPanel panel;
     public static JFrame frame;
+    public static int width;
     
     public static void init(){
         
@@ -25,13 +26,13 @@ public class GUI {
         panel.setLayout(null);
 
         // Setting up game
-        Minesweeper.game.init(panel);
+        //Minesweeper.game.init(panel);
         JMenuBar mb = Minesweeper.createMenuBar();
 
         frame = new JFrame("Minesweeper");
         frame.setJMenuBar(mb);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        panel.setBackground(Color.BLUE);
+        panel.setBackground(Color.LIGHT_GRAY);
         frame.add(panel);
         frame.setDefaultCloseOperation(3);
         System.out.println("Game size: " + Minesweeper.game.getBoardSize() + ", numbombs: " + Minesweeper.game.numBombs);

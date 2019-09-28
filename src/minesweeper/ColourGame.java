@@ -3,7 +3,6 @@ package minesweeper;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,21 +18,20 @@ public class ColourGame extends Game {
         
         
         int size = 6;
-        int numberOfBombs = 1;
+        int numberOfBombs = 4;
 
         if (difficulty == Difficulty.INTERMEDIATE) {
             size = 9;
-            numberOfBombs = 2;
+            numberOfBombs = 8;
 
         } else if (difficulty == Difficulty.EXPERT) {
             size = 15;
-            numberOfBombs = 6;
+            numberOfBombs = 16;
         }
 
         this.board = new Cell[size][size];
         this.boardSize = size;
-        //this.numBombs = numberOfBombs;
-        this.numBombs = 1;
+        this.numBombs = numberOfBombs;
         this.cellWidth = 40;
         this.cellHeight = 40;
         this.difficulty = difficulty;
@@ -62,7 +60,7 @@ public class ColourGame extends Game {
         this.cellWidth = 40;
         this.cellHeight = 40;
         this.difficulty = difficulty;
-        this.gameMode = GameMode.CLASSIC;
+        this.gameMode = GameMode.COLOUR;
 
         this.seed = seed;
     }
@@ -80,7 +78,8 @@ public class ColourGame extends Game {
                 board[i][j].getBtn().setBorderPainted(false);
                 board[i][j].getBtn().setOpaque(false);
 
-                board[i][j].getBtn().setBounds(board[i][j].getX() * 40 + 10, board[i][j].getY() * 40, 40, 40);
+                int offset = (GUI.width/2) - ((boardSize * cellWidth) / 2);
+                board[i][j].getBtn().setBounds(board[i][j].getX() * cellWidth + offset, board[i][j].getY() * cellWidth, cellWidth, cellHeight);
 
                 Cell cell = board[i][j];
                 if(j == 0){
@@ -114,38 +113,20 @@ public class ColourGame extends Game {
                     if(cell.getColour() == Colour.RED){
                         cell.getBtn().setIcon(new ImageIcon(Img.redCellImg));
                         cell.setState(State.CLICKED);
-                        return;
                     }
                     if(cell.getColour() == Colour.BLUE){
                         cell.getBtn().setIcon(new ImageIcon(Img.blueCellImg));
                         cell.setState(State.CLICKED);
-                        return;
                     }
                     if(cell.getColour() == Colour.YELLOW){
                         cell.getBtn().setIcon(new ImageIcon(Img.yellowCellImg));
                         cell.setState(State.CLICKED);
-                        return;
                     }
-                    System.out.println("Fucked up.");
-                    if (cell.isBomb()) {
-                        cell.getBtn().setIcon(new ImageIcon(Img.bombRedImgClassic));
-                        cell.setState(State.RED_BOMB);
-                        showBombs();
-                        // Lost game.
+                    
+                    if(hasLost()){
                         gameOver = true;
-                        return;
                     }
-
-                    int numBombs = countAdjacentBombs(cell.getX(), cell.getY());
-                    if (numBombs == 0) {
-                        cell.setState(State.CLICKED);
-                        cell.getBtn().setIcon(new ImageIcon(Img.clickedImgClassic));
-                        openCellsFrom(cell.getX(), cell.getY());
-                        return;
-                    }
-
-                    cell.setState(State.CLICKED);
-                    cell.getBtn().setIcon(new ImageIcon(Img.classicNumBombsImgArr[numBombs]));
+                    
                 } else if (evt.getButton() == 3) {
                     cell.setState(State.FLAGGED);
                     cell.getBtn().setIcon(new ImageIcon(Img.flaggedImgClassic));
@@ -165,6 +146,32 @@ public class ColourGame extends Game {
                 }
             }
         });
+    }
+    
+    private boolean hasLost() {
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                if (board[i][j].getState() == State.CLICKED) {
+                    Colour cellCol = board[i][j].getColour();
+                    //check left cell
+                    if(i-1 > 0 && board[i-1][j].getColour() == cellCol && board[i-1][j].getState() == State.CLICKED)
+                        return true;
+                    //check top cell
+                    if(j-1 > 0 && board[i][j-1].getColour() == cellCol && board[i][j-1].getState() == State.CLICKED)
+                        return true;
+                    //check right cell
+                    if(i+1 < boardSize && board[i+1][j].getColour() == cellCol && board[i+1][j].getState() == State.CLICKED)
+                        return true;
+                    //check bottom cell
+                    if(j+1 < boardSize && board[i][j+1].getColour() == cellCol && board[i][j+1].getState() == State.CLICKED)
+                        return true;
+                    
+                    //board[i][j].getBtn().setIcon(new ImageIcon(Img.bombImgClassic));
+                }
+            }
+        }
+        System.out.println("Not Lost");
+        return false;
     }
 
     int countAdjacentBombs(int x, int y) {

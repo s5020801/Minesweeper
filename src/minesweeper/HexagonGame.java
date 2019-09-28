@@ -80,7 +80,8 @@ public class HexagonGame extends Game {
 
                 int yOffset = cellHeight / 4 * 3;//(hexHeight*0.75);
 
-                board[i][j].getBtn().setBounds(board[i][j].getX() * cellWidth + 10 + xOffset, board[i][j].getY() * yOffset, cellWidth, cellHeight);
+                int centreOffset = (GUI.width/2) - ((boardSize * cellWidth) / 2) - (cellWidth/4);
+                board[i][j].getBtn().setBounds(board[i][j].getX() * cellWidth + centreOffset + xOffset, board[i][j].getY() * yOffset, cellWidth, cellHeight);
 
                 Cell cell = board[i][j];
 

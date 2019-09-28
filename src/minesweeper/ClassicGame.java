@@ -60,6 +60,7 @@ public class ClassicGame extends Game {
     }
 
     void initCells(JPanel panel) {
+        System.out.println("Initialising Cells");
         // Set up initial board cells.
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
@@ -71,8 +72,9 @@ public class ClassicGame extends Game {
                 board[i][j].getBtn().setContentAreaFilled(false);
                 board[i][j].getBtn().setBorderPainted(false);
                 board[i][j].getBtn().setOpaque(false);
-
-                board[i][j].getBtn().setBounds(board[i][j].getX() * 40 + 10, board[i][j].getY() * 40, 40, 40);
+                //int offset = (GUI.panel.getWidth()/2) - ((boardSize * cellWidth) / 2);
+                int offset = (GUI.width/2) - ((boardSize * cellWidth) / 2);
+                board[i][j].getBtn().setBounds(board[i][j].getX() * cellWidth + offset, board[i][j].getY() * cellWidth, cellWidth, cellHeight);
 
                 Cell cell = board[i][j];
 
@@ -143,8 +145,10 @@ public class ClassicGame extends Game {
                             null,
                             null,
                             "Name");
-                    System.out.println("S: " + s);
-                    HighScores.add(s);
+                    if (s != null && s.length() > 0) {
+                        System.out.println("S: " + s);
+                        HighScores.add(s);
+                    }
                 }
             }
         });

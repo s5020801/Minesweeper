@@ -34,6 +34,7 @@ public class Minesweeper {
         FileUtils.loadHighScores();
         Img.initImages();
         GUI.init();
+        restartGame(GameMode.CLASSIC, Difficulty.BEGINNER);
     }
 
     public static JMenuBar createMenuBar() {
@@ -136,16 +137,21 @@ public class Minesweeper {
             height = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellHeight() + 60;
         } else if (gameMode.equals(GameMode.HEXAGON)) {
             game = (Game) new HexagonGame(difficulty);
-            width = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 20 + (Minesweeper.game.getCellWidth() / 2);
-            height = Minesweeper.game.getBoardSize() * (Minesweeper.game.getCellHeight() / 4 * 3) + 60;
+            width = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 40 + (Minesweeper.game.getCellWidth() / 2);
+            height = Minesweeper.game.getBoardSize() * (Minesweeper.game.getCellHeight() / 4 * 3) + 80;
         } else if (gameMode.equals(GameMode.COLOUR)) {
             game = (Game) new ColourGame(difficulty);
             width = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 20;
             height = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellHeight() + 60;
         } 
+        GUI.width = Math.max(width, 400);
         game.init(GUI.panel);
-        startTimer();
-        GUI.frame.setSize(width, height);
+        //width = Math.max(width, 400);
+        GUI.frame.setSize(GUI.width, height);
+        startTime = 0;
+        HighScores.currentScore = 0;
+        timer.setText("Score: " + 0);
+        
     }
 
     public static void startTimer() {

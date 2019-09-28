@@ -26,14 +26,6 @@ public class HighScores {
     }
 
     public static void add(String name) {
-        /*for (int i = 0; i < scores.size(); i++) {
-            if (currentScore < Integer.parseInt(scores.get(i).split(":")[1])) {
-                int index = Math.max(0, i - 1);
-                scores.add(index, name + ":" + currentScore);
-                break;
-            }
-        }
-         */
         scores.add(name + ":" + currentScore);
         sortScores();
         FileUtils.saveScores();
