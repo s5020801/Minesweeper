@@ -18,4 +18,7 @@ public class Const {
     
     public static final int EXPERT_NUM_BOMBS = 80;
     public static final int EXPERT_BOARD_SIZE = 20;
+    
+    public static final String SAVE_DIR = System.getProperty("user.home") + "/minesweeper/";
+    public static final String HIGH_SCORES_FILE_NAME = "highScores.ini";
 }

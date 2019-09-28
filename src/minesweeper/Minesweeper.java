@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
@@ -29,32 +30,10 @@ public class Minesweeper {
     //Game game = (Game)new ClassicGame(boardSize, 30);
 
     public static void main(String[] args) {
+        FileUtils.setupDirectory();
+        FileUtils.loadHighScores();
         Img.initImages();
         GUI.init();
-        //game.init(GUI.panel);
-        /*
-        //Setting images
-        Img.initImages();
-
-        panel = new JPanel();
-        panel.setLayout(null);
-
-        // Setting up game
-        game.init(panel);
-
-        JMenuBar mb = createMenuBar();
-
-        frame = new JFrame("Minesweeper");
-        frame.setJMenuBar(mb);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        frame.add(panel);
-        frame.setDefaultCloseOperation(3);
-        System.out.println("Game size: " + game.getBoardSize() + ", numbombs: " + game.numBombs);
-        //f.setSize(game.getBoardSize()*40+20, game.getBoardSize()*40+40+mb.getHeight());
-        frame.setSize(400, 600);
-        frame.setVisible(true);
-         */
     }
 
     public static JMenuBar createMenuBar() {
@@ -118,10 +97,26 @@ public class Minesweeper {
             Difficulty currentDifficulty = game.getDifficulty();
             restartGame(currentGameMode, currentDifficulty);
         });
+        JButton highScoresBtn = new JButton("Scores");
+        highScoresBtn.addActionListener((event) -> {
+            System.out.println("High scores");
+            
+            String highScoresStr = "";
+            for(String highScore : HighScores.scores){
+                highScoresStr += highScore.replace(":", " - ") + "\n";
+            }
+            
+            JOptionPane.showMessageDialog(
+                            GUI.frame,
+                            highScoresStr,
+                            "High Scores",
+                            JOptionPane.PLAIN_MESSAGE);
+        });
 
         menuBar.add(modeMenu);
         menuBar.add(difficultyMenu);
         menuBar.add(restartBtn);
+        menuBar.add(highScoresBtn);
         menuBar.add(Box.createHorizontalGlue());
         timer.setBorder(new EmptyBorder(0,0,0,20));
         menuBar.add(timer);
@@ -161,6 +156,7 @@ public class Minesweeper {
 
                 long millisRun = System.currentTimeMillis() - startTime;
                 long secondsRun = millisRun / 1000;
+                HighScores.currentScore = secondsRun;
                 timer.setText("Score: " + secondsRun);
                 
                 try {

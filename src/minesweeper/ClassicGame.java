@@ -32,7 +32,7 @@ public class ClassicGame extends Game {
         this.gameMode = GameMode.CLASSIC;
 
         this.seed = System.currentTimeMillis();
-        //this.seed = 1234;
+        this.seed = 1234;
     }
 
     public ClassicGame(Difficulty difficulty, long seed) {
@@ -143,6 +143,8 @@ public class ClassicGame extends Game {
                             null,
                             null,
                             "Name");
+                    System.out.println("S: " + s);
+                    HighScores.add(s);
                 }
             }
         });

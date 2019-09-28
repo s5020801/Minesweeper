@@ -16,8 +16,19 @@ public class ColourGame extends Game {
     private Colour nextYCol = Colour.RED;
     
     public ColourGame(Difficulty difficulty) {
+        
+        
         int size = 6;
-        int numberOfBombs = Const.BEGINNER_NUM_BOMBS;
+        int numberOfBombs = 1;
+
+        if (difficulty == Difficulty.INTERMEDIATE) {
+            size = 9;
+            numberOfBombs = 2;
+
+        } else if (difficulty == Difficulty.EXPERT) {
+            size = 15;
+            numberOfBombs = 6;
+        }
 
         this.board = new Cell[size][size];
         this.boardSize = size;
