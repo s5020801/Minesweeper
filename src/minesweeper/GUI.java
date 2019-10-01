@@ -7,9 +7,11 @@ package minesweeper;
 
 import java.awt.Color;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -18,6 +20,7 @@ import javax.swing.WindowConstants;
 public class GUI {
     public static JPanel panel;
     public static JFrame frame;
+    public static JLabel timer = new JLabel("Score: 0");
     public static int width;
     
     public static void init(){
@@ -26,8 +29,9 @@ public class GUI {
         panel.setLayout(null);
 
         // Setting up game
-        //Minesweeper.game.init(panel);
         JMenuBar mb = Minesweeper.createMenuBar();
+        timer.setBorder(new EmptyBorder(0,0,0,20));
+        mb.add(timer);
 
         frame = new JFrame("Minesweeper");
         frame.setJMenuBar(mb);
@@ -35,18 +39,15 @@ public class GUI {
         panel.setBackground(Color.LIGHT_GRAY);
         frame.add(panel);
         frame.setDefaultCloseOperation(3);
-        System.out.println("Game size: " + Minesweeper.game.getBoardSize() + ", numbombs: " + Minesweeper.game.numBombs);
-        //f.setSize(game.getBoardSize()*40+20, game.getBoardSize()*40+40+mb.getHeight());
-        //frame.setSize(400, 600);
-        System.out.println("menu height: " + mb.getHeight());
-        int width = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 20;
+        int tempWidth = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 20;
         int height = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellHeight() + 60;
-        frame.setSize(width, height);
+        frame.setSize(tempWidth, height);
         frame.setVisible(true);
-        
-        
     }
     
+    public static void setTimerText(String text){
+        timer.setText(text);
+    }
     
     
 }

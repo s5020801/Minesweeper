@@ -21,7 +21,6 @@ public class Minesweeper {
     //Beginner has 10 mines, Intermediate has 40 mines, and Expert has 99 mines.
     // Default
     public static Game game = (Game) new ClassicGame(Difficulty.BEGINNER);
-    public static JLabel timer = new JLabel("Score: 0");
     public static long startTime = System.currentTimeMillis();
 
     public static void main(String[] args) {
@@ -114,8 +113,6 @@ public class Minesweeper {
         menuBar.add(restartBtn);
         menuBar.add(highScoresBtn);
         menuBar.add(Box.createHorizontalGlue());
-        timer.setBorder(new EmptyBorder(0,0,0,20));
-        menuBar.add(timer);
 
         return menuBar;
     }
@@ -141,16 +138,15 @@ public class Minesweeper {
         } 
         // Apparently something about Windows OS makes the frame shorter so cells get cut off
         height += 60;
-        //Does it with width as well???
+        //Does it with width as well
         width += 80;
         
         GUI.width = Math.max(width, 400);
         game.init(GUI.panel);
-        //width = Math.max(width, 400);
         GUI.frame.setSize(GUI.width, height);
         startTime = 0;
         HighScores.currentScore = 0;
-        timer.setText("Score: " + 0);
+        GUI.setTimerText("Score: " + HighScores.currentScore);
         
     }
 
@@ -163,7 +159,7 @@ public class Minesweeper {
                 long millisRun = System.currentTimeMillis() - startTime;
                 long secondsRun = millisRun / 1000;
                 HighScores.currentScore = secondsRun;
-                timer.setText("Score: " + secondsRun);
+                GUI.setTimerText("Score: " + HighScores.currentScore);
                 
                 try {
                     Thread.sleep(1000);
