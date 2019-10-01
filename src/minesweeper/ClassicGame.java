@@ -32,7 +32,7 @@ public class ClassicGame extends Game {
         this.gameMode = GameMode.CLASSIC;
 
         this.seed = System.currentTimeMillis();
-        this.seed = 1234;
+        //this.seed = 1234;
     }
 
     public ClassicGame(Difficulty difficulty, long seed) {
@@ -72,7 +72,6 @@ public class ClassicGame extends Game {
                 board[i][j].getBtn().setContentAreaFilled(false);
                 board[i][j].getBtn().setBorderPainted(false);
                 board[i][j].getBtn().setOpaque(false);
-                //int offset = (GUI.panel.getWidth()/2) - ((boardSize * cellWidth) / 2);
                 int offset = (GUI.width/2) - ((boardSize * cellWidth) / 2);
                 board[i][j].getBtn().setBounds(board[i][j].getX() * cellWidth + offset, board[i][j].getY() * cellWidth, cellWidth, cellHeight);
 
@@ -108,6 +107,7 @@ public class ClassicGame extends Game {
                         showBombs();
                         // Lost game.
                         gameOver = true;
+                        showGameLostDiaglog();
                         return;
                     }
 

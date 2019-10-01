@@ -4,14 +4,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -26,8 +23,6 @@ public class Minesweeper {
     public static Game game = (Game) new ClassicGame(Difficulty.BEGINNER);
     public static JLabel timer = new JLabel("Score: 0");
     public static long startTime = System.currentTimeMillis();
-    //Game game = (Game)new HexagonGame(boardSize, 10);
-    //Game game = (Game)new ClassicGame(boardSize, 30);
 
     public static void main(String[] args) {
         FileUtils.setupDirectory();
@@ -144,6 +139,11 @@ public class Minesweeper {
             width = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellWidth() + 20;
             height = Minesweeper.game.getBoardSize() * Minesweeper.game.getCellHeight() + 60;
         } 
+        // Apparently something about Windows OS makes the frame shorter so cells get cut off
+        height += 60;
+        //Does it with width as well???
+        width += 80;
+        
         GUI.width = Math.max(width, 400);
         game.init(GUI.panel);
         //width = Math.max(width, 400);

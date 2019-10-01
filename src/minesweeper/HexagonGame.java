@@ -115,6 +115,7 @@ public class HexagonGame extends Game {
                         showBombs();
                         // Lost game.
                         gameOver = true;
+                        showGameLostDiaglog();
                         return;
                     }
 
@@ -152,6 +153,10 @@ public class HexagonGame extends Game {
                             null,
                             null,
                             "Name");
+                    if (s != null && s.length() > 0) {
+                        System.out.println("S: " + s);
+                        HighScores.add(s);
+                    }
                 }
 
             }

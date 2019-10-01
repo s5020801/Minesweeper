@@ -12,13 +12,13 @@ import static org.junit.Assert.*;
  *
  * @author Josh
  */
-public class HexagonGameTest {
+public class ClassicGameTest {
     
-    public HexagonGameTest() {
+    public ClassicGameTest() {
     }
 
     /**
-     * Test of countAdjacentBombs method, of class HexagonGame.
+     * Test of countAdjacentBombs method, of class ClassicGame.
      */
     @Test
     public void testCountAdjacentBombs() {
@@ -26,7 +26,7 @@ public class HexagonGameTest {
         System.out.println("countAdjacentBombs");
         int x = 1;
         int y = 1;
-        HexagonGame instance = new HexagonGame(Difficulty.BEGINNER, 1234);
+        ClassicGame instance = new ClassicGame(Difficulty.BEGINNER, 1234);
         instance.init(null);
         int expResult = 4;
         int result = instance.countAdjacentBombs(x, y);
